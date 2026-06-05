@@ -1,0 +1,70 @@
+﻿@page "/staff"
+@rendermode InteractiveServer
+@using ModuleReview.Data.Models
+@using ModuleReview.Services
+@inject StaffService staffService
+@inject NavigationManager NavigationManager
+
+<h3>Staff: View</h3>
+
+<div class="col-4">
+    <div class="input-group mb-3 col-4">
+        <input class="form-control" type="text" @bind="searchText" placeholder="Search..." />
+        <div class="input-group-append">
+            <button class="btn btn-primary" @onclick="ApplyFilter">Search</button>
+        </div>
+    </div>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Forename</th>
+            <th>Surname</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var staff in staffing)
+        {
+            <tr>
+                <td>@staff.Id</td>
+                <td>@staff.Title</td>
+                <td>@staff.Forename</td>
+                <td>@staff.Surname</td>
+                <td><button class="btn btn-primary" @onclick="() => GoToDetailsPage(staff.Id)">View</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    List<Staff>? staffing = new();
+
+    public string searchText;
+
+    // protected async override Task OnInitializedAsync()
+    // {
+    //     ApplyFilter();
+    // }
+
+    void ApplyFilter()
+    {
+        //     programmes = programmeService.GetListByProgrammeLeaderId(Id);
+        // }
+        if (string.IsNullOrEmpty(searchText))
+        {
+            staffing = staffService.GetList();
+        }
+        else
+        {
+            staffing = staffService.GetFilteredList(searchText);
+        }
+    }
+    void GoToDetailsPage(int id)
+    {
+        NavigationManager.NavigateTo("/staff/" + id);
+    }
+}
+

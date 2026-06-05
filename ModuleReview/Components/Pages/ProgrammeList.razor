@@ -1,0 +1,69 @@
+﻿@page "/programme"
+@rendermode InteractiveServer
+@using ModuleReview.Data.Models
+@using ModuleReview.Services
+@inject ProgrammeService programmeService
+@inject NavigationManager NavigationManager
+
+<h3>Programme: List</h3>
+
+<div class="col-4">
+    <div class="input-group mb-3 col-4">
+        <input class="form-control" type="text" @bind="searchText" placeholder="Search..." />
+        <div class="input-group-append">
+            <button class="btn btn-primary" @onclick="ApplyFilter">Search</button>
+            </div>
+        </div>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Code</th>
+            <th>Title</th>
+            <th>Credits</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var programme in programmes)
+        {
+            <tr>
+                <td>@programme.Id</td>
+                <td>@programme.Code</td>
+                <td>@programme.Title</td>
+                <td>@programme.Credits</td>
+                <td><button class="btn btn-primary" @onclick="() => GoToDetailsPage(programme.Id)">View</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    List<Programme>? programmes = new();
+
+    public string searchText;
+
+    // protected async override Task OnInitializedAsync()
+    // {
+    //     ApplyFilter();
+    // }
+
+    void ApplyFilter()
+    {
+    //     programmes = programmeService.GetListByProgrammeLeaderId(Id); 
+    // }
+        if (string.IsNullOrEmpty(searchText))
+        {
+            programmes = programmeService.GetList();
+        }
+        else
+        {
+            programmes = programmeService.GetFilteredList(searchText);
+        }
+    }
+    void GoToDetailsPage(int id)
+    {
+        NavigationManager.NavigateTo("/programme/" + id);
+    }
+}
