@@ -3,6 +3,7 @@
 @using ModuleReview.Data.Models
 @using ModuleReview.Services
 @inject ProgrammeService programmeService
+@inject StaffService staffService
 @inject NavigationManager NavigationManager
 
 <h3>Programme: List</h3>
@@ -22,6 +23,7 @@
             <th>Code</th>
             <th>Title</th>
             <th>Credits</th>
+            <th>Programme Leader</th>
             <th></th>
         </tr>
     </thead>
@@ -33,6 +35,10 @@
                 <td>@programme.Code</td>
                 <td>@programme.Title</td>
                 <td>@programme.Credits</td>
+                <td>
+                    @{string programmeLeader = GetProgrammeLeaderName(programme.ProgrammeLeaderId);}
+                    @programmeLeader
+                </td>
                 <td><button class="btn btn-primary" @onclick="() => GoToDetailsPage(programme.Id)">View</button></td>
             </tr>
         }
@@ -51,8 +57,8 @@
 
     void ApplyFilter()
     {
-    //     programmes = programmeService.GetListByProgrammeLeaderId(Id); 
-    // }
+        //     programmes = programmeService.GetListByProgrammeLeaderId(Id); 
+        // }
         if (string.IsNullOrEmpty(searchText))
         {
             programmes = programmeService.GetList();
@@ -65,5 +71,19 @@
     void GoToDetailsPage(int id)
     {
         NavigationManager.NavigateTo("/programme/" + id);
+    }
+    string GetProgrammeLeaderName(int? id)
+    {
+        Staff record = new Staff();
+
+        if (id != 0 && id != null)
+        {
+            record = staffService.GetByID((int)id);
+            if (record.Id != 0)
+            {
+                return record.Title + " " + record.Surname;
+            }
+        }
+        return "";
     }
 }
